@@ -1,18 +1,55 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require('mongoose');
+const cors = require("cors");
+const passport = require("passport");
+const session = require("express-session");
+require("./passport");
 const app = express();
-const port = process.env.PORT || 3000;
-const indexRoute = require('./src/routes/index.route');
-const bodyParser = require('body-parser');
+app.use(express.json());
 
-app.use(bodyParser.json());
+const authRoute = require("./src/routes/userGoogleAccount.route");
+const userRoute = require("./src/routes/userDetails.route");
+const userAuthRoute = require("./src/routes/userAuth.route");
 
-app.use(cors({
-    origin: '*'
-}));
-app.use('', indexRoute);
+// Use CORS middleware before routes
+app.use(
+  cors({
+    origin: "http://localhost:3000",  // Allow the frontend origin
+    methods: "GET,POST,PUT,DELETE",  // Allowed HTTP methods
+    credentials: true,  // Allow credentials (cookies)
+  })
+);
 
-app.listen(port, () => {
-    console.log(`BlissMe APIs listening on port - ${port}`)
-})
+app.use(
+  session({
+    secret: "xzcbnxncdhvbfhncxbnvbcfhv", // use a strong secret in production
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // set to true if using HTTPS
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  })
+);
+
+
+// Connect to MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => {
+    console.log("MongoDB connected successfully");
+  })
+  .catch((err) => {
+    console.error("MongoDB connection error:", err);
+  });
+ 
+  
+app.use(passport.initialize());
+app.use(passport.session());
+app.use("/auth", authRoute);
+app.use("/user",userRoute)
+app.use("/authuser",userAuthRoute)
+
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => console.log(`Listening on port ${port}...`));
