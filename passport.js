@@ -2,7 +2,7 @@ require("dotenv").config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport = require("passport");
 const User = require("./src/models/userModel");
-const { encryptText } = require("./src/utils/encyption");
+const { encryptText } = require("./src/utils/encryption");
 
 passport.use(
   new GoogleStrategy(
