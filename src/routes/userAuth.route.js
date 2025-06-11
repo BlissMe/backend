@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
-const { encryptText } = require("../utils/encyption");
+const { encryptText } = require("../utils/encryption");
 
 require("dotenv").config();
 
@@ -26,18 +26,28 @@ router.post("/signup", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+
+    // Encrypt the email before querying the DB
+    const encryptedEmail = encryptText(email);
+
+    const user = await User.findOne({ email: encryptedEmail });
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
-    if (user.status === "false") {
-      return res.status(401).json({ message: "Wait for admin approval" });
-    }
-    const token = jwt.sign({ email: user.email, role: user.role }, process.env.ACCESS_TOKEN, { expiresIn: "8h" });
-    res.status(200).json({ token });
+
+    const token = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN, {
+      expiresIn: "8h",
+    });
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
+
 
 module.exports = router;
