@@ -7,6 +7,8 @@ const session = require("express-session");
 require("./passport");
 const app = express();
 app.use(express.json());
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 const authRoute = require("./src/routes/userGoogleAccount.route");
 const userRoute = require("./src/routes/userDetails.route");

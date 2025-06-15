@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { encryptText } = require("../utils/encryption");
+const passport = require("passport");
 
 require("dotenv").config();
 
@@ -17,7 +18,10 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ email:encryptedEmail, password: hashedPassword });
     await newUser.save();
-    res.status(200).json({ message: "Successfully Registered" });
+    const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN, {
+      expiresIn: "8h",
+    });
+    res.status(200).json({ message: "Successfully Registered" ,token});
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
@@ -47,7 +51,5 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
-
-
 
 module.exports = router;
