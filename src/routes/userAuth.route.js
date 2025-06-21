@@ -12,10 +12,10 @@ router.post("/signup", async (req, res) => {
   try {
     const { email, password } = req.body;
     const encryptedEmail = encryptText(email);
-    const existingUser = await User.findOne({ email :encryptedEmail});
+    const existingUser = await User.findOne({ email: encryptedEmail });
     if (existingUser) return res.status(400).json({ message: "Email already exists." });
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({ email:encryptedEmail, password: hashedPassword });
+    const newUser = new User({ email: encryptedEmail, password: hashedPassword });
     await newUser.save();
     res.status(200).json({ message: "Successfully Registered" });
   } catch (error) {
@@ -35,7 +35,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.ACCESS_TOKEN, {
+    const token = jwt.sign({ userID: user.userID, email: user.email }, process.env.ACCESS_TOKEN, {
       expiresIn: "8h",
     });
 
