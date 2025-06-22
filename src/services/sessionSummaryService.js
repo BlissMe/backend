@@ -29,9 +29,9 @@ async function generateAndSaveSessionSummary(userID, sessionID) {
     return summaryText;
 }
 
-async function getSessionSummary(userID, sessionID) {
-    const summary = await SessionSummary.findOne({ userID, sessionID });
-    return summary ? decrypt(summary.summary) : null;
+async function getSessionSummariesByUserID(userID) {
+    const summaries = await SessionSummary.find({ userID });
+    return summaries.map(summary => decrypt(summary.summary));
 }
 
-module.exports = { generateAndSaveSessionSummary, getSessionSummary };
+module.exports = { generateAndSaveSessionSummary, getSessionSummariesByUserID };
