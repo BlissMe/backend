@@ -4,12 +4,14 @@ const router = express.Router();
 
 const blissmeRoutes = require("./blissme.route");
 const userRoutes = require("./user.route");
+const characterRoutes = require("./character.route");
 
 // router.use(verifyToken);
 
 router.use("/blissme",
     blissmeRoutes,
-    userRoutes
+    userRoutes,
+    characterRoutes
 );
 
 router.use((err, req, res, next) => {
