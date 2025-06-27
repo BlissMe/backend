@@ -3,6 +3,7 @@ const userService = require("../services/userService");
 const setPreferences = async (req, res) => {
     try {
         const userId = req.user.userId;
+        console.log("Setting preferences for user controller:", userId);
         const { nickname, virtualCharacter, inputMode } = req.body;
 
         const user = await userService.setInitialPreferences(userId, {
@@ -19,7 +20,7 @@ const setPreferences = async (req, res) => {
 
 const updateNickname = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.userId;
         const { nickname } = req.body;
 
         const user = await userService.updateNickname(userId, nickname);
@@ -31,7 +32,7 @@ const updateNickname = async (req, res) => {
 
 const updateVirtualCharacter = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.userId;
         const { virtualCharacter } = req.body;
 
         const user = await userService.updateVirtualCharacter(userId, virtualCharacter);
@@ -43,7 +44,7 @@ const updateVirtualCharacter = async (req, res) => {
 
 const updateInputMode = async (req, res) => {
     try {
-        const userId = req.user._id;
+        const userId = req.user.userId;
         const { inputMode } = req.body;
 
         if (!["voice", "text"].includes(inputMode)) {
@@ -57,9 +58,26 @@ const updateInputMode = async (req, res) => {
     }
 };
 
+const getPreferences = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        const preferences = await userService.getUserPreferences(userId);
+
+        res.status(200).json({
+            message: "User preferences fetched successfully",
+            preferences,
+        });
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+
 module.exports = {
     setPreferences,
     updateNickname,
     updateVirtualCharacter,
-    updateInputMode
+    updateInputMode,
+    getPreferences
 };
