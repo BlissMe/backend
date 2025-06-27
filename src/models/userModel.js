@@ -1,8 +1,16 @@
 const mongoose = require("mongoose");
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true, required: true },
-
+  userID: {
+    type: Number,
+    unique: true,
+  },
+  email: {
+    type: String,
+    unique: true,
+    required: true
+  },
   password: {
     type: String,
     required: function () {
@@ -10,9 +18,13 @@ const userSchema = new mongoose.Schema({
       return !this.googleId;
     },
   },
-  googleId: { type: String, unique: true, sparse: true },
-
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
 
 });
+userSchema.plugin(AutoIncrement, { inc_field: "userID" });
 
 module.exports = mongoose.model("User", userSchema);
