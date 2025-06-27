@@ -1,4 +1,4 @@
-const { uploadCharacterService } = require("../services/characterService");
+const { uploadCharacterService, getAllCharactersService } = require("../services/characterService");
 
 const uploadCharacter = async (req, res) => {
     try {
@@ -12,6 +12,16 @@ const uploadCharacter = async (req, res) => {
     }
 };
 
+const getAllCharacters = async (req, res) => {
+    try {
+        const characters = await getAllCharactersService();
+        res.status(200).json(characters);
+    } catch (err) {
+        res.status(500).json({ message: "Failed to fetch characters", error: err.message });
+    }
+};
+
 module.exports = {
-    uploadCharacter
+    uploadCharacter,
+    getAllCharacters
 };
