@@ -7,5 +7,6 @@ router.post("/preferences", auth, userController.setPreferences);
 router.patch("/preferences/nickname", auth, userController.updateNickname);
 router.patch("/preferences/character", auth, userController.updateVirtualCharacter);
 router.patch("/preferences/input-mode", auth, userController.updateInputMode);
+router.get("/get-preferences", auth, userController.getPreferences);
 
 module.exports = router;
