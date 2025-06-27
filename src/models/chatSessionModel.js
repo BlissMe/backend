@@ -12,7 +12,8 @@ const chatSessionSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    endedAt: { type: Date },
 });
 
 module.exports = mongoose.model("ChatSession", chatSessionSchema);
