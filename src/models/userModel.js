@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
       // Require password only if googleId is not set
       return !this.googleId;
     },
-  },
+  },  
   googleId: {
     type: String,
     unique: true,
