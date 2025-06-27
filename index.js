@@ -13,6 +13,8 @@ const userRoute = require("./src/routes/userDetails.route");
 const userAuthRoute = require("./src/routes/userAuth.route");
 const chatRoutes = require("./src/routes/chat.route");
 const sessionRoutes = require("./src/routes/session.route");
+const sessionSummary = require("./src/routes/sessionSummary.route");
+const phq9Questions = require("./src/routes/phq9.route");
 
 // Use CORS middleware before routes
 app.use(
@@ -53,6 +55,8 @@ app.use("/user", userRoute)
 app.use("/authuser", userAuthRoute)
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
+app.use("/sessionSummary", sessionSummary);
+app.use("/phq9", phq9Questions);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
