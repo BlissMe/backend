@@ -21,6 +21,12 @@ const uploadCharacterService = async (filePath, name) => {
     return character;
 };
 
+const getAllCharactersService = async () => {
+    const characters = await Character.find().sort({ characterId: 1 });
+    return characters;
+};
+
 module.exports = {
-    uploadCharacterService
+    uploadCharacterService,
+    getAllCharactersService
 };
