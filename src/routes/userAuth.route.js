@@ -31,11 +31,23 @@ router.post("/signup", async (req, res) => {
     }
 
     await newUser.save();
-    res.status(200).json({ message: "Successfully Registered" });
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userID: newUser.userID, email: newUser.email },
+      process.env.ACCESS_TOKEN,
+      { expiresIn: "8h" }
+    );
+
+    res.status(200).json({
+      message: "Successfully Registered",
+      token,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
 
 router.post("/login", async (req, res) => {
   try {
