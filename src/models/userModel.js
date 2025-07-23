@@ -12,10 +12,15 @@ const userSchema = new mongoose.Schema({
     required: true
   },
   password: {
+  type: String,
+  required: function () {
+    return !this.googleId && this.authType !== "face";
+  },
+},
+  authType: {
     type: String,
-    required: function () {
-      return !this.googleId;
-    },
+    enum: ["normal", "face"],
+    default: "normal",
   },
   googleId: {
     type: String,
