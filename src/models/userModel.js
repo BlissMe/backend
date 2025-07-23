@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
- password: {
+  password: {
   type: String,
   required: function () {
     return !this.googleId && this.authType !== "face";
@@ -27,8 +27,20 @@ const userSchema = new mongoose.Schema({
     unique: true,
     sparse: true
   },
-
+  nickname: {
+    type: String,
+    default: ""
+  },
+  virtualCharacter: {
+    type: String,
+    default: "cat" // or any default you like
+  },
+  inputMode: {
+    type: String,
+    default: "text"
+  }
 });
+
 userSchema.plugin(AutoIncrement, { inc_field: "userID" });
 
 module.exports = mongoose.model("User", userSchema);
