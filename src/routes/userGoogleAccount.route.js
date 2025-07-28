@@ -20,7 +20,7 @@ router.get(
       { expiresIn: "8h" }
     );
 
-res.redirect(`${process.env.CLIENT_URL}/chat/text?token=${token}`);
+res.redirect(`${process.env.CLIENT_URL}?token=${token}`);
   }
 );
 
