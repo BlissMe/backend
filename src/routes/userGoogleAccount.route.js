@@ -1,39 +1,31 @@
-const router = require("express").Router();
+const express = require("express");
+const jwt = require("jsonwebtoken");
 const passport = require("passport");
 
-router.get("/login/success", (req, res) => {
-  console.log("User in session:", req.user); 
-  if (req.user) {
-    res.status(200).json({
-      error: false,
-      message: "Successfully Logged In",
-      user: req.user,
-    });
-  } else {
-    res.status(403).json({ error: true, message: "Not Authorized" });
-  }
-});
-
-router.get("/login/failed", (req, res) => {
-  res.status(401).json({
-    error: true,
-    message: "Log in failture",
-  });
-});
+const router = express.Router();
 
 router.get(
-  "/google/callback",
-  passport.authenticate("google", {
-    successRedirect: process.env.CLIENT_URL,
-    failureRedirect: "/login/failed",
-  })
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-router.get("/google", passport.authenticate("google", ["profile", "email"]));
+// On success, generate JWT and redirect to frontend with token
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: "/login/failed" }),
+  (req, res) => {
+    const token = jwt.sign(
+      { email: req.user.email },
+      process.env.ACCESS_TOKEN,
+      { expiresIn: "8h" }
+    );
 
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(process.env.CLIENT_URL);
+res.redirect(`${process.env.CLIENT_URL}/chat/text?token=${token}`);
+  }
+);
+
+router.get("/login/failed", (req, res) => {
+  res.status(401).json({ message: "Google login failed" });
 });
 
 module.exports = router;
