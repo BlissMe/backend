@@ -11,20 +11,29 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, authType } = req.body;
+
     const encryptedEmail = encryptText(email);
     const existingUser = await User.findOne({ email: encryptedEmail });
+
     if (existingUser)
       return res.status(400).json({ message: "Email already exists." });
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      email: encryptedEmail,
-      password: hashedPassword,
-    });
+
+    let newUser;
+
+    if (authType === "normal") {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      newUser = new User({ email: encryptedEmail, password: hashedPassword });
+    } else if (authType === "face") {
+      newUser = new User({ email: encryptedEmail, authType: "face" });
+    } else {
+      return res.status(400).json({ message: "Invalid signup type." });
+    }
+
     await newUser.save();
     res.status(200).json({ message: "Successfully Registered" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
