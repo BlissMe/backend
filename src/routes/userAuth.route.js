@@ -44,7 +44,7 @@ router.post("/signup", async (req, res) => {
       message: "Successfully Registered",
       token,
       email: email,
-      userId :newUser.userID
+      userID :newUser.userID
     });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
@@ -59,7 +59,13 @@ router.post("/login", async (req, res) => {
     const encryptedEmail = encryptText(email);
 
     const user = await User.findOne({ email: encryptedEmail });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Incorrect email or password" });
     }
 
@@ -81,6 +87,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 });
+
 
 router.post("/forgot-password", async (req, res) => {
   try {
@@ -196,6 +203,23 @@ router.post("/change-password", authenticateToken, async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
+router.delete("/delete-account", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findOne({ userID: req.user.userID });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    await User.deleteOne({ userID: req.user.userID });
+
+    res.status(200).json({ message: "Account deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
 
 
 
