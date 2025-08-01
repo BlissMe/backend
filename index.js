@@ -23,7 +23,7 @@ const indexRoutes = require("./src/routes/index.route");
 app.use(
   cors({
     origin: "http://localhost:3000",  // Allow the frontend origin
-    methods: "GET,POST,PUT,DELETE",  // Allowed HTTP methods
+    methods: "GET,POST,PUT,DELETE,PATCH",  // Allowed HTTP methods
     credentials: true,  // Allow credentials (cookies)
   })
 );
