@@ -1,4 +1,3 @@
-const userModel = require("../models/userModel");
 const User = require("../models/userModel");
 const { encrypt, decrypt } = require("../utils/chatEncryption");
 
@@ -53,10 +52,41 @@ const updateInputMode = async (userId, inputMode) => {
     );
 };
 
+const updateUserPreferences = async (userId, preferences) => {
+    const updates = {};
+
+    if (preferences.nickname !== undefined) {
+        updates.nickname = encrypt(preferences.nickname);
+    }
+
+    if (preferences.virtualCharacter !== undefined) {
+        updates.virtualCharacter = preferences.virtualCharacter;
+    }
+
+    if (preferences.inputMode !== undefined) {
+        updates.inputMode = preferences.inputMode;
+    }
+
+    if (Object.keys(updates).length === 0) {
+        throw new Error("No valid preferences provided for update");
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+        { userID: userId },
+        updates,
+        { new: true }
+    );
+
+    if (!updatedUser) throw new Error("User not found");
+
+    return updatedUser;
+};
+
 module.exports = {
     setInitialPreferences,
     updateNickname,
     updateVirtualCharacter,
     updateInputMode,
-    getUserPreferences
+    getUserPreferences,
+    updateUserPreferences, 
 };
