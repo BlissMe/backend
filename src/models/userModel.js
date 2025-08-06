@@ -9,36 +9,36 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
-    required: true
+    required: true,
   },
   password: {
-  type: String,
-  required: function () {
-    return !this.googleId && this.authType !== "face";
-  },
-},
-  authType: {
     type: String,
-    enum: ["normal", "face"],
-    default: "normal",
+    required: function () {
+      return !this.googleId;
+    },
   },
   googleId: {
     type: String,
     unique: true,
-    sparse: true
+    sparse: true,
   },
   nickname: {
     type: String,
-    default: ""
+    default: "",
   },
   virtualCharacter: {
-    type: String,
-    default: "cat" // or any default you like
+    type:String ,
+    default: "cat", // or any default you like
   },
   inputMode: {
     type: String,
-    default: "text"
-  }
+    default: "text",
+  },
+
+  faceDescriptor: {
+    type: [Number],
+    default: null,
+  },
 });
 
 userSchema.plugin(AutoIncrement, { inc_field: "userID" });
