@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
     default: "",
   },
   virtualCharacter: {
-    type:Number ,
-    default: 1, // or any default you like
+    type:String ,
+    default: "cat", // or any default you like
   },
   inputMode: {
     type: String,
