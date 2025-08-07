@@ -77,15 +77,6 @@ const euclideanDistance = (arr1, arr2) => {
     arr1.reduce((sum, val, i) => sum + Math.pow(val - arr2[i], 2), 0)
   );
 };
-const getFaceDescriptor = async (base64Image) => {
-  const response = await axios.post(
-    "http://localhost:8000/generate-descriptor",
-    {
-      image: base64Image,
-    }
-  );
-  return response.data.descriptor;
-};
 router.post("/face-register", async (req, res) => {
   try {
     const { email, descriptor } = req.body;
@@ -146,14 +137,14 @@ router.post("/face-login", async (req, res) => {
     // Generate JWT token
     const token = jwt.sign(
       { userID: matchedUser.userID, email: matchedUser.email },
-      process.env.ACCESS_TOKEN, // use ACCESS_TOKEN here to match signup/login
+      process.env.ACCESS_TOKEN, 
       { expiresIn: "8h" }
     );
 
     res.status(200).json({
       message: "Login successful",
       token,
-      email: matchedUser.email, // encrypted email
+      email: matchedUser.email, 
       userID: matchedUser.userID,
     });
   } catch (err) {
