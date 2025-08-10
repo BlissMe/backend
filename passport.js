@@ -2,7 +2,7 @@ require("dotenv").config();
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport = require("passport");
 const User = require("./src/models/userModel");
-const { encryptText } = require("./src/utils/encyption");
+const { encryptText } = require("./src/utils/encryption");
 
 passport.use(
   new GoogleStrategy(
@@ -19,9 +19,8 @@ passport.use(
 
         let existingUser = await User.findOne({ googleId: encryptedGoogleId });
 
-        if (existingUser) {
-          return done(null, existingUser);
-        }
+        if (existingUser) return done(null, existingUser);
+
         const newUser = new User({
           googleId: encryptedGoogleId,
           email: encryptedEmail,
@@ -37,9 +36,9 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.id); // Use internal MongoDB _id
 });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
+passport.deserializeUser((id, done) => {
+  User.findById(id).then(user => done(null, user)).catch(err => done(err));
 });
