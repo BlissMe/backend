@@ -7,7 +7,7 @@ const { authenticateToken } = require("../services/authentication");
 
 const router = express.Router();
 
-router.post("/classifier/save", authenticateToken, handleSaveClassifierResult);
-router.get("/classifier/user", authenticateToken, handleGetMyClassifierResults);
+router.post("/save", authenticateToken, handleSaveClassifierResult);
+router.get("/user", authenticateToken, handleGetMyClassifierResults);
 
 module.exports = router;
