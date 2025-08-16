@@ -18,6 +18,7 @@ const sessionRoutes = require("./src/routes/session.route");
 const sessionSummary = require("./src/routes/sessionSummary.route");
 const phq9Questions = require("./src/routes/phq9.route");
 const indexRoutes = require("./src/routes/index.route");
+const classifierRoutes = require("./src/routes/classifierResult.route");
 
 // Use CORS middleware before routes
 app.use(
@@ -61,8 +62,7 @@ app.use("/session", sessionRoutes);
 app.use("/sessionSummary", sessionSummary);
 app.use("/phq9", phq9Questions);
 app.use("/api", indexRoutes);
-
-
+app.use("/api", classifierRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
