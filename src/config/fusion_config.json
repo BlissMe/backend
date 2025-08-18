@@ -1,0 +1,79 @@
+{
+  "weights": {
+    "phq9": 0.7895,
+    "classifier": 0.1579,
+    "emotion": 0.0526
+  },
+  "cutoffs": {
+    "minimal_max": 0.189,
+    "moderate_max": 0.7398
+  },
+  "note": "R <= minimal_max -> Minimal; minimal_max < R <= moderate_max -> Moderate; R > moderate_max -> Severe",
+  "calibration": {
+    "type": "isotonic",
+    "x_thresholds": [
+      0.0,
+      0.0417,
+      0.0833,
+      0.125,
+      0.1667,
+      0.2083,
+      0.25,
+      0.2917,
+      0.4167,
+      0.4583,
+      0.5417,
+      0.5833,
+      0.6667
+    ],
+    "y_thresholds": [
+      0.16666666666666666,
+      0.3620689655172414,
+      0.4074074074074074,
+      0.5,
+      0.5833333333333334,
+      0.6511627906976745,
+      0.6511627906976745,
+      0.75,
+      0.75,
+      0.8333333333333334,
+      0.8333333333333334,
+      1.0,
+      1.0
+    ]
+  },
+  "feature_columns": {
+    "phq_norm": "Normalized_PHQ9_Score",
+    "classifier_raw": "Chat_Summary_0_1",
+    "emotion_binary": "Emotion_Binary_0_Pos_1_Neg",
+    "ground_truth": "Severity Level"
+  },
+  "cv_macro_f1": 0.9747,
+  "full_macro_f1": 0.978,
+  "n_samples": 250,
+  "grid_used": {
+    "phq_grid": [
+      0.55,
+      0.65,
+      0.75
+    ],
+    "clf_grid": [
+      0.15,
+      0.25,
+      0.35
+    ],
+    "emo_grid": [
+      0.0,
+      0.05,
+      0.1
+    ],
+    "t1_quantiles": [
+      0.15,
+      0.4
+    ],
+    "t2_quantiles": [
+      0.55,
+      0.85
+    ]
+  }
+}
