@@ -7,6 +7,8 @@ const session = require("express-session");
 require("./passport");
 const app = express();
 app.use(express.json());
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 const authRoute = require("./src/routes/userGoogleAccount.route");
 const userRoute = require("./src/routes/userDetails.route");
@@ -16,12 +18,13 @@ const sessionRoutes = require("./src/routes/session.route");
 const sessionSummary = require("./src/routes/sessionSummary.route");
 const phq9Questions = require("./src/routes/phq9.route");
 const indexRoutes = require("./src/routes/index.route");
-
+const classifierRoutes = require("./src/routes/classifierResult.route");
+const assessmentRoutes = require("./src/routes/levelDetection.router");
 // Use CORS middleware before routes
 app.use(
   cors({
     origin: "http://localhost:3000",  // Allow the frontend origin
-    methods: "GET,POST,PUT,DELETE",  // Allowed HTTP methods
+    methods: "GET,POST,PUT,DELETE,PATCH",  // Allowed HTTP methods
     credentials: true,  // Allow credentials (cookies)
   })
 );
@@ -59,8 +62,8 @@ app.use("/session", sessionRoutes);
 app.use("/sessionSummary", sessionSummary);
 app.use("/phq9", phq9Questions);
 app.use("/api", indexRoutes);
-
-
+app.use("/classifier", classifierRoutes);
+app.use("/levelDetection", assessmentRoutes);
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

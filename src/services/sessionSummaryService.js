@@ -12,9 +12,10 @@ async function generateAndSaveSessionSummary(userID, sessionID) {
         return `${chat.sender}: ${decryptedMessage}`;
     }).join("\n");
 
-    const response = await axios.post("http://localhost:8000/summarize", {
-        history: fullChat,
-    });
+    const response = await axios.post("http://127.0.0.1:8000/summarize", {
+    history: fullChat,
+});
+
 
     const summaryText = response.data.summary;
     const encryptedSummary = encrypt(summaryText);
