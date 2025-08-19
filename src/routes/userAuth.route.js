@@ -5,6 +5,7 @@ const User = require("../models/userModel");
 const { encryptText } = require("../utils/encryption");
 const { sendResetEmail } = require("../utils/mailer");
 const { authenticateToken } = require("../services/authentication");
+const { encryptArray, decryptArray } = require("../utils/faceAuthEncryption");
 
 require("dotenv").config();
 
@@ -77,6 +78,7 @@ const euclideanDistance = (arr1, arr2) => {
     arr1.reduce((sum, val, i) => sum + Math.pow(val - arr2[i], 2), 0)
   );
 };
+
 router.post("/face-register", async (req, res) => {
   try {
     const { email, descriptor } = req.body;
@@ -92,7 +94,7 @@ router.post("/face-register", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.faceDescriptor = descriptor;
+    user.faceDescriptor = encryptArray(descriptor);
     await user.save();
 
     res.status(200).json({ message: "Face registered successfully" });
@@ -110,23 +112,27 @@ router.post("/face-login", async (req, res) => {
       return res.status(400).json({ message: "Descriptor is required" });
     }
 
-    // Fetch all users with a registered faceDescriptor
     const usersWithDescriptors = await User.find({
-      faceDescriptor: { $exists: true },
+      faceDescriptor: { $ne: null },
     });
 
-    const threshold = 0.45; // You can tune this threshold
+    const threshold = 0.45;
     let matchedUser = null;
 
     for (let user of usersWithDescriptors) {
-      const storedDescriptor = user.faceDescriptor;
+      if (!user.faceDescriptor) continue; // extra safety check
 
-      if (storedDescriptor && storedDescriptor.length === descriptor.length) {
-        const distance = euclideanDistance(descriptor, storedDescriptor);
-        if (distance < threshold) {
-          matchedUser = user;
-          break;
+      try {
+        const storedDescriptor = decryptArray(user.faceDescriptor);
+        if (storedDescriptor && storedDescriptor.length === descriptor.length) {
+          const distance = euclideanDistance(descriptor, storedDescriptor);
+          if (distance < threshold) {
+            matchedUser = user;
+            break;
+          }
         }
+      } catch (e) {
+        console.error("Decryption failed for user:", user.userID, e.message);
       }
     }
 
@@ -134,17 +140,16 @@ router.post("/face-login", async (req, res) => {
       return res.status(401).json({ message: "Face not recognized" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userID: matchedUser.userID, email: matchedUser.email },
-      process.env.ACCESS_TOKEN, 
+      process.env.ACCESS_TOKEN,
       { expiresIn: "8h" }
     );
 
     res.status(200).json({
       message: "Login successful",
       token,
-      email: matchedUser.email, 
+      email: matchedUser.email,
       userID: matchedUser.userID,
     });
   } catch (err) {
