@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   },
 
   faceDescriptor: {
-    type: [Number],
+    type: String,
     default: null,
   },
 });
