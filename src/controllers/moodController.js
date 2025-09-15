@@ -3,10 +3,9 @@ const MoodRecord = require("../models/moodModel");
 // Log today's mood
 const logMood = async (req, res) => {
   try {
-    const { mood, sleepHours, reflection } = req.body;
+    const { mood, sleepHours, reflection, tags } = req.body; 
     const userId = req.user.userId;
 
-    // Calculate today's range
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
 
@@ -18,16 +17,17 @@ const logMood = async (req, res) => {
       date: { $gte: todayStart, $lte: todayEnd },
     });
 
-   /*  if (existing) {
-      return res.status(400).json({ message: "You already logged today's mood" });
-    } */
+    // Optional: prevent duplicate logs
+    // if (existing) {
+    //   return res.status(400).json({ message: "You already logged today's mood" });
+    // }
 
-    // Store sleepHours directly as string
     const record = await MoodRecord.create({
       userId,
       mood,
       sleepHours,
       reflection,
+      tags: tags || [],
     });
 
     res.status(201).json(record);
@@ -35,6 +35,7 @@ const logMood = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get today's mood
 const getTodayMood = async (req, res) => {
