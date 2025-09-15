@@ -19,6 +19,10 @@ const moodRecordSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    tags: {
+      type: [String], // <-- new field
+      default: [],
+    },
     date: {
       type: Date,
       default: Date.now,
