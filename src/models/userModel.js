@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     default: "",
   },
   virtualCharacter: {
-    type:String ,
+    type: String,
     default: "cat", // or any default you like
   },
   inputMode: {
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   },
 
   faceDescriptor: {
-    type: [Number],
+    type: String,
     default: null,
   },
 });
