@@ -70,5 +70,9 @@ app.use("/moods", moodRoutes);
 app.use("/classifier", classifierRoutes);
 app.use("/levelDetection", assessmentRoutes);
 
+app.get('/', (req, res) => {
+  res.send('Welcome to Blissme App!');
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
