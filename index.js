@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
@@ -26,10 +26,7 @@ const assessmentRoutes = require("./src/routes/levelDetection.router");
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://blissme.vercel.app" // frontend in production
-        : "http://localhost:3000", // frontend when running locally
+    origin: ["http://localhost:3000", "https://blissme.vercel.app"],
     methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
@@ -48,7 +45,8 @@ app.use(
 );
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
   })
