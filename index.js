@@ -26,9 +26,12 @@ const assessmentRoutes = require("./src/routes/levelDetection.router");
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: "https://blissme.vercel.app",  // Allow the frontend origin
-    methods: "GET,POST,PUT,DELETE,PATCH",  // Allowed HTTP methods
-    credentials: true,  // Allow credentials (cookies)
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://blissme.vercel.app" // frontend in production
+        : "http://localhost:3000", // frontend when running locally
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    credentials: true,
   })
 );
 
@@ -44,7 +47,6 @@ app.use(
   })
 );
 
-
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
@@ -54,12 +56,11 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error("MongoDB connection error:", err);
   });
 
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoute);
-app.use("/user", userRoute)
-app.use("/authuser", userAuthRoute)
+app.use("/user", userRoute);
+app.use("/authuser", userAuthRoute);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/sessionSummary", sessionSummary);
@@ -70,8 +71,8 @@ app.use("/moods", moodRoutes);
 app.use("/classifier", classifierRoutes);
 app.use("/levelDetection", assessmentRoutes);
 
-app.get('/', (req, res) => {
-  res.send('Welcome to Blissme App!');
+app.get("/", (req, res) => {
+  res.send("Welcome to Blissme App!");
 });
 
 const port = process.env.PORT || 5000;
