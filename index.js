@@ -26,7 +26,7 @@ const assessmentRoutes = require("./src/routes/levelDetection.router");
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: "http://localhost:3000",  // Allow the frontend origin
+    origin: "https://blissme.vercel.app",  // Allow the frontend origin
     methods: "GET,POST,PUT,DELETE,PATCH",  // Allowed HTTP methods
     credentials: true,  // Allow credentials (cookies)
   })
