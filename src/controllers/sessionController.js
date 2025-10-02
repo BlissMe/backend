@@ -20,7 +20,7 @@ const handleEndSession = async (req, res) => {
 
     try {
         sessionID = Number(sessionID);
-
+console.log(sessionID)
         await ChatSession.findOneAndUpdate(
             { userID, sessionID },
             { endedAt: new Date() }
