@@ -2,6 +2,7 @@ const {
     computeAndSaveDepressionIndexByUser,
     getLatestSavedIndexByUser,
     getIndexHistoryByUser,
+    getAllUsersLatestDepressionIndex,
 } = require("../services/detectionService");
 
 const handleGetDepressionIndex = async (req, res) => {
@@ -38,8 +39,19 @@ const handleGetIndexHistory = async (req, res) => {
     }
 };
 
+const handleGetAllUsersLatestIndex = async (req, res) => {
+    try {
+        const rows = await getAllUsersLatestDepressionIndex();
+        return res.status(200).json({ success: true, data: rows });
+    } catch (err) {
+        console.error("all-users-index failed:", err);
+        return res.status(500).json({ success: false, error: "Failed to fetch all users index" });
+    }
+};
+
 module.exports = {
     handleGetDepressionIndex,
     handleGetLatestIndex,
     handleGetIndexHistory,
+    handleGetAllUsersLatestIndex
 };
