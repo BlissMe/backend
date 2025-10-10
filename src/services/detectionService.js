@@ -210,28 +210,29 @@ async function getIndexHistoryByUser(userID, limit = 10) {
         .lean();
 }
 
-async function getAllUsersLatestDepressionIndex() {
-    // Fetch the latest depression index for each user
+async function getAllUsersLatestFullDepressionIndex() {
     const rows = await DepressionIndexResult.aggregate([
         { $sort: { createdAt: -1 } }, // latest first
         {
             $group: {
                 _id: "$userID",
-                R_value: { $first: "$R_value" },
-                level: { $first: "$level" },
-                createdAt: { $first: "$createdAt" },
+                doc: { $first: "$$ROOT" }, // keep the whole document
             },
         },
-        { $project: { _id: 0, userID: "$_id", R_value: 1, level: 1, createdAt: 1 } },
-        { $sort: { userID: 1 } } // optional: sort by userID
+        {
+            $replaceRoot: { newRoot: { $mergeObjects: ["$doc", { userID: "$_id" }] } }
+        },
+        { $project: { _id: 0 } }, // remove Mongo internal _id
+        { $sort: { userID: 1 } },
     ]);
 
     return rows;
 }
+
 module.exports = {
     computeDepressionIndexByUser,
     computeAndSaveDepressionIndexByUser,
     getLatestSavedIndexByUser,
     getIndexHistoryByUser,
-    getAllUsersLatestDepressionIndex
+    getAllUsersLatestFullDepressionIndex
 };
