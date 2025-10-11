@@ -6,6 +6,7 @@ const { encryptText } = require("../utils/encryption");
 const { sendResetEmail } = require("../utils/mailer");
 const { authenticateToken } = require("../services/authentication");
 const { encryptArray, decryptArray } = require("../utils/faceAuthEncryption");
+const { encrypt } = require("../utils/chatEncryption");
 
 require("dotenv").config();
 
@@ -13,20 +14,20 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const encryptedEmail = encryptText(email);
-    const existingUser = await User.findOne({ email: encryptedEmail });
+    const { username, password } = req.body;
+    const encryptedUsername = encryptText(username);
+    const existingUser = await User.findOne({ username: encryptedUsername });
     if (existingUser)
-      return res.status(400).json({ message: "Email already exists." });
+      return res.status(400).json({ message: "Username already exists." });
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
-      email: encryptedEmail,
+      username: encryptedUsername,
       password: hashedPassword,
     });
     await newUser.save();
     // Generate JWT token
     const token = jwt.sign(
-      { userID: newUser.userID, email: newUser.email },
+      { userID: newUser.userID, username: newUser.username },
       process.env.ACCESS_TOKEN,
       { expiresIn: "8h" }
     );
@@ -34,7 +35,7 @@ router.post("/signup", async (req, res) => {
     res.status(200).json({
       message: "Successfully Registered",
       token,
-      email: email,
+      username: username,
       userID: newUser.userID,
     });
   } catch (error) {
@@ -44,18 +45,18 @@ router.post("/signup", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    // Encrypt the email before querying the DB
-    const encryptedEmail = encryptText(email);
+    // Encrypt the username before querying the DB
+    const encryptedusername = encryptText(username);
 
-    const user = await User.findOne({ email: encryptedEmail });
+    const user = await User.findOne({ username: encryptedusername });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ message: "Incorrect email or password" });
+      return res.status(401).json({ message: "Incorrect username or password" });
     }
 
     const token = jwt.sign(
-      { userID: user.userID, email: user.email,role:user.role },
+      { userID: user.userID, username: user.username,role:user.role },
       process.env.ACCESS_TOKEN,
       {
         expiresIn: "8h",
@@ -65,7 +66,7 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      email: email,
+      username: username,
       userID: user.userID,
       role: user.role,
     });
@@ -82,14 +83,14 @@ const euclideanDistance = (arr1, arr2) => {
 
 router.post("/face-register", async (req, res) => {
   try {
-    const { email, descriptor } = req.body;
+    const { username, descriptor } = req.body;
 
-    if (!email || !descriptor) {
-      return res.status(400).json({ message: "Email and descriptor required" });
+    if (!username || !descriptor) {
+      return res.status(400).json({ message: "username and descriptor required" });
     }
 
-    const encryptedEmail = encryptText(email);
-    const user = await User.findOne({ email: encryptedEmail });
+    const encryptedusername = encryptText(username);
+    const user = await User.findOne({ username: encryptedusername });
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -142,7 +143,7 @@ router.post("/face-login", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { userID: matchedUser.userID, email: matchedUser.email },
+      { userID: matchedUser.userID, username: matchedUser.username },
       process.env.ACCESS_TOKEN,
       { expiresIn: "8h" }
     );
@@ -150,7 +151,7 @@ router.post("/face-login", async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      email: matchedUser.email,
+      username: matchedUser.username,
       userID: matchedUser.userID,
     });
   } catch (err) {
@@ -213,15 +214,15 @@ router.post("/reset-password", async (req, res) => {
 
 router.post("/update-email", authenticateToken, async (req, res) => {
   try {
-    const { newEmail } = req.body;
+    const { newUsername } = req.body;
 
-    if (!newEmail) {
-      return res.status(400).json({ message: "New email is required" });
+    if (!newUsername) {
+      return res.status(400).json({ message: "New username is required" });
     }
 
-    const encryptedNewEmail = encryptText(newEmail);
+    const encryptedNewUserName = encryptText(newUsername);
 
-    const existingUser = await User.findOne({ email: encryptedNewEmail });
+    const existingUser = await User.findOne({ email: encryptedNewUserName });
     if (existingUser) {
       return res.status(400).json({ message: "Email already in use" });
     }
@@ -231,10 +232,10 @@ router.post("/update-email", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.email = encryptedNewEmail;
+    user.username = encryptedNewusername;
     await user.save();
 
-    res.status(200).json({ message: "Email updated successfully" });
+    res.status(200).json({ message: "username updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
