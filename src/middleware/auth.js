@@ -14,7 +14,7 @@ const auth = (req, res, next) => {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
         req.user = {
             userId: decoded.userID,
-            email: decoded.email,
+            username: decoded.username,
         };
 
         console.log("Authenticated user:", req.user.userId);
