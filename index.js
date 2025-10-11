@@ -22,6 +22,7 @@ const therapyRoutes = require("./src/routes/therapy.route");
 const moodRoutes = require("./src/routes/mood.route");
 const classifierRoutes = require("./src/routes/classifierResult.route");
 const assessmentRoutes = require("./src/routes/levelDetection.router");
+const doctorRoutes = require("./src/routes/doctor.route");
 
 // Use CORS middleware before routes
 app.use(
@@ -68,6 +69,7 @@ app.use("/therapy", therapyRoutes);
 app.use("/moods", moodRoutes);
 app.use("/classifier", classifierRoutes);
 app.use("/levelDetection", assessmentRoutes);
+app.use("/doctorlevel", doctorRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Blissme App!");
