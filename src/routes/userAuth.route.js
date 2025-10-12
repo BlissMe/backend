@@ -6,7 +6,6 @@ const { encryptText } = require("../utils/encryption");
 const { sendResetEmail } = require("../utils/mailer");
 const { authenticateToken } = require("../services/authentication");
 const { encryptArray, decryptArray } = require("../utils/faceAuthEncryption");
-const { encrypt } = require("../utils/chatEncryption");
 
 require("dotenv").config();
 
@@ -14,18 +13,29 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, securityQuestion, securityAnswer } = req.body;
+
+    if (!securityQuestion || !securityAnswer) {
+      return res
+        .status(400)
+        .json({ message: "Security question and answer are required." });
+    }
+
     const encryptedUsername = encryptText(username);
+
     const existingUser = await User.findOne({ username: encryptedUsername });
     if (existingUser)
       return res.status(400).json({ message: "Username already exists." });
-    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       username: encryptedUsername,
-      password: hashedPassword,
+      password,
+      securityQuestion,
+      securityAnswer,
     });
+
     await newUser.save();
-    // Generate JWT token
+
     const token = jwt.sign(
       { userID: newUser.userID, username: newUser.username },
       process.env.ACCESS_TOKEN,
@@ -52,11 +62,13 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne({ username: encryptedusername });
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ message: "Incorrect username or password" });
+      return res
+        .status(401)
+        .json({ message: "Incorrect username or password" });
     }
 
     const token = jwt.sign(
-      { userID: user.userID, username: user.username,role:user.role },
+      { userID: user.userID, username: user.username, role: user.role },
       process.env.ACCESS_TOKEN,
       {
         expiresIn: "8h",
@@ -86,7 +98,9 @@ router.post("/face-register", async (req, res) => {
     const { username, descriptor } = req.body;
 
     if (!username || !descriptor) {
-      return res.status(400).json({ message: "username and descriptor required" });
+      return res
+        .status(400)
+        .json({ message: "username and descriptor required" });
     }
 
     const encryptedusername = encryptText(username);
@@ -162,29 +176,63 @@ router.post("/face-login", async (req, res) => {
 
 router.post("/forgot-password", async (req, res) => {
   try {
-    const { email } = req.body;
-    const encryptedEmail = encryptText(email);
-    const user = await User.findOne({ email: encryptedEmail });
+    const { username } = req.body;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username is required." });
+    }
+
+    const encryptedUsername = encryptText(username);
+    const user = await User.findOne({ username: encryptedUsername });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Return only the security question
+    res.status(200).json({
+      message: "User found. Please answer the security question.",
+      securityQuestion: user.securityQuestion,
+    });
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/verify-security-answer", async (req, res) => {
+  try {
+    const { username, securityAnswer } = req.body;
+
+    if (!username || !securityAnswer) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const encryptedUsername = encryptText(username);
+    const user = await User.findOne({ username: encryptedUsername });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isAnswerCorrect = await bcrypt.compare(securityAnswer, user.securityAnswer);
+    if (!isAnswerCorrect) {
+      return res.status(400).json({ message: "Incorrect security answer." });
     }
 
     const resetToken = jwt.sign(
-      { email: user.email },
+      { username: user.username },
       process.env.ACCESS_TOKEN,
-      {
-        expiresIn: "15m",
-      }
+      { expiresIn: "15m" }
     );
 
-    await sendResetEmail(email, resetToken);
-
-    res.status(200).json({ message: "Reset link sent to your email" });
+    res.status(200).json({
+      message: "Security answer verified. You can reset your password.",
+      resetToken,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Something went wrong. Please try again." });
+    console.error("Verify security answer error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
@@ -192,15 +240,19 @@ router.post("/reset-password", async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
-    const email = decoded.email;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: "Token and new password are required." });
     }
 
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
+    const encryptedUsername = decoded.username;
+
+    const user = await User.findOne({ username: encryptedUsername });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    // Hash new password and save
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;
     await user.save();
@@ -211,6 +263,7 @@ router.post("/reset-password", async (req, res) => {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 });
+
 
 router.post("/update-email", authenticateToken, async (req, res) => {
   try {
@@ -224,7 +277,7 @@ router.post("/update-email", authenticateToken, async (req, res) => {
 
     const existingUser = await User.findOne({ email: encryptedNewUserName });
     if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
+      return res.status(400).json({ message: "Username already in use" });
     }
 
     const user = await User.findOne({ userID: req.user.userID });
@@ -232,10 +285,10 @@ router.post("/update-email", authenticateToken, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.username = encryptedNewusername;
+    user.username = encryptedNewUserName;
     await user.save();
 
-    res.status(200).json({ message: "username updated successfully" });
+    res.status(200).json({ message: "Username updated successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
