@@ -90,7 +90,7 @@ const getAllUserPreferences = async () => {
     ...user.toObject(), 
     nickname: user.nickname ? decrypt(user.nickname) : null
   }));
-
+console.log(decryptedUsers);
   return { users: decryptedUsers };
 };
 
