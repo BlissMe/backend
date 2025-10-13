@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const cors = require("cors");
 const passport = require("passport");
 const session = require("express-session");
@@ -18,14 +18,18 @@ const sessionRoutes = require("./src/routes/session.route");
 const sessionSummary = require("./src/routes/sessionSummary.route");
 const phq9Questions = require("./src/routes/phq9.route");
 const indexRoutes = require("./src/routes/index.route");
+const therapyRoutes = require("./src/routes/therapy.route");
+const moodRoutes = require("./src/routes/mood.route");
 const classifierRoutes = require("./src/routes/classifierResult.route");
 const assessmentRoutes = require("./src/routes/levelDetection.router");
+const doctorRoutes = require("./src/routes/doctor.route");
+
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: "http://localhost:3000",  // Allow the frontend origin
-    methods: "GET,POST,PUT,DELETE,PATCH",  // Allowed HTTP methods
-    credentials: true,  // Allow credentials (cookies)
+    origin: ["http://localhost:3000", "https://blissme.vercel.app"],
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    credentials: true,
   })
 );
 
@@ -41,9 +45,9 @@ app.use(
   })
 );
 
-
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("MongoDB connected successfully");
   })
@@ -51,19 +55,25 @@ mongoose.connect(process.env.MONGODB_URI)
     console.error("MongoDB connection error:", err);
   });
 
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoute);
-app.use("/user", userRoute)
-app.use("/authuser", userAuthRoute)
+app.use("/user", userRoute);
+app.use("/authuser", userAuthRoute);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
 app.use("/sessionSummary", sessionSummary);
 app.use("/phq9", phq9Questions);
 app.use("/api", indexRoutes);
+app.use("/therapy", therapyRoutes);
+app.use("/moods", moodRoutes);
 app.use("/classifier", classifierRoutes);
 app.use("/levelDetection", assessmentRoutes);
+app.use("/doctorlevel", doctorRoutes);
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Blissme App!");
+});
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
