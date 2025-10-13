@@ -1,1 +1,1 @@
-public/images/virtualCharacters/*.png filter=lfs diff=lfs merge=lfs -text
+public/images/virtualCharacters/cat.png filter=lfs diff=lfs merge=lfs -text
