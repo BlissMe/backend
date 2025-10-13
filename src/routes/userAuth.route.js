@@ -39,7 +39,7 @@ router.post("/signup", async (req, res) => {
     const token = jwt.sign(
       { userID: newUser.userID, username: newUser.username },
       process.env.ACCESS_TOKEN,
-      { expiresIn: "8h" }
+      { expiresIn: "2h" }
     );
 
     res.status(200).json({
@@ -71,7 +71,7 @@ router.post("/login", async (req, res) => {
       { userID: user.userID, username: user.username, role: user.role },
       process.env.ACCESS_TOKEN,
       {
-        expiresIn: "8h",
+        expiresIn: "2h",
       }
     );
 
