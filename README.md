@@ -1,8 +1,8 @@
 ---
-title: BlissmeBackend
-emoji: 🌖
-colorFrom: indigo
-colorTo: red
+title: NodeBackend
+emoji: 🏢
+colorFrom: blue
+colorTo: yellow
 sdk: docker
 pinned: false
 ---
