@@ -27,7 +27,7 @@ const doctorAuthRoutes = require("./src/routes/doctorAuth.route");
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: ["http://localhost:3000","http://localhost:3001", "https://blissme.vercel.app","https://frontend-git-test-depression-imasha-nawodis-projects.vercel.app/"],
+    origin: ["http://localhost:3000","http://localhost:3001", "https://blissme.vercel.app","https://frontend-git-test-depression-imasha-nawodis-projects.vercel.app"],
     methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
