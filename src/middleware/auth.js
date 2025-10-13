@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
         req.user = {
-            userId: decoded.userID,
+            userId: decoded.userID ||  decoded.doctorID,
             username: decoded.username,
         };
 
