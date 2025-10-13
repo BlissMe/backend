@@ -3,7 +3,6 @@ const userService = require("../services/userService");
 const setPreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
-    console.log("Setting preferences for user controller:", userId);
     const { nickname, virtualCharacter, inputMode } = req.body;
 
     const user = await userService.setInitialPreferences(userId, {
