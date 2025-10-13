@@ -104,7 +104,6 @@ const getAllPreferences = async (req, res) => {
   try {
 
     const preferences = await userService.getAllUserPreferences();
-console.log(preferences);
     res.status(200).json({
       message: "All User preferences fetched successfully",
       preferences,
