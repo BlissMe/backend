@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-  role: { type: String, enum: ["patient", "doctor"], default: "patient" },
+  role: { type: String, enum: ["patient"], default: "patient" },
 
   securityQuestion: {
     type: String,
