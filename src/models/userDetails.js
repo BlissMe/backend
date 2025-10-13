@@ -10,6 +10,7 @@ const userDetailsSchema = new mongoose.Schema({
   virtualName: { type: String, required: true },
   character: { type: String, required: true },
   inputMethod: { type: String, required: true },
+  role: { type: String, enum: ["patient", "doctor"], default: "patient" },
 });
 
 module.exports = mongoose.model("UserDetails", userDetailsSchema);
