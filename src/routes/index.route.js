@@ -5,13 +5,17 @@ const router = express.Router();
 const blissmeRoutes = require("./blissme.route");
 const userRoutes = require("./user.route");
 const characterRoutes = require("./character.route");
+const songRoutes = require("./song.route");
+const sketchRoutes = require("./sketch.route");
 
 // router.use(verifyToken);
 
 router.use("/blissme",
     blissmeRoutes,
     userRoutes,
-    characterRoutes
+    characterRoutes,
+    songRoutes,
+    sketchRoutes
 );
 
 router.use((err, req, res, next) => {
