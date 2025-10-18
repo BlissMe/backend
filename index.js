@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const authRoute = require("./src/routes/userGoogleAccount.route");
-const userRoute = require("./src/routes/userDetails.route");
 const userAuthRoute = require("./src/routes/userAuth.route");
 const chatRoutes = require("./src/routes/chat.route");
 const sessionRoutes = require("./src/routes/session.route");
@@ -58,7 +57,6 @@ mongoose
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoute);
-app.use("/user", userRoute);
 app.use("/authuser", userAuthRoute);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
