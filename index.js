@@ -24,10 +24,12 @@ const classifierRoutes = require("./src/routes/classifierResult.route");
 const assessmentRoutes = require("./src/routes/levelDetection.router");
 const doctorRoutes = require("./src/routes/doctor.route");
 const doctorAuthRoutes = require("./src/routes/doctorAuth.route");
+const therapyListRoutes = require("./src/routes/therapyList.route");
+
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: ["http://localhost:3000","http://localhost:3001", "https://blissme.vercel.app","https://doctor-portal-phi.vercel.app"],
+    origin: ["http://localhost:3000", "http://localhost:3001", "https://blissme.vercel.app", "https://doctor-portal-phi.vercel.app"],
     methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
@@ -71,6 +73,7 @@ app.use("/classifier", classifierRoutes);
 app.use("/levelDetection", assessmentRoutes);
 app.use("/doctorlevel", doctorRoutes);
 app.use("/doctorAuth", doctorAuthRoutes);
+app.use("/api/therapyList", therapyListRoutes);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Blissme App!");
