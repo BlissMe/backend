@@ -34,7 +34,7 @@ async function createDoctor() {
     });
 
     await doctor.save();
-    console.log("Doctor account created successfully!");
+    console.log("Doctor account created su!");
     process.exit(0);
   } catch (err) {
     console.error(err);
