@@ -34,7 +34,7 @@ app.use(
 
 app.use(
   session({
-    secret: "xzcbnxncdhvbfhncxbnvbcfhv",
+    secret: "xzcbnxncdhvbfhncxbnvbcfhv", // use a strong secret in production
     resave: false,
     saveUninitialized: false,
     cookie: {
