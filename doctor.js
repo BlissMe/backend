@@ -23,7 +23,7 @@ async function createDoctor() {
 
     const existing = await User.findOne({ email: encryptedEmail });
     if (existing) {
-      console.log("Doctor already exists!");
+      console.log("Doctor already exists!!");
       process.exit(0);
     }
 
