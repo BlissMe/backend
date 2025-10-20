@@ -61,10 +61,13 @@ router.post("/login", async (req, res) => {
     const encryptedusername = encryptText(username);
 
     const user = await User.findOne({ username: encryptedusername });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res
-        .status(401)
-        .json({ message: "Incorrect username or password" });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Incorrect password" });
     }
 
     const token = jwt.sign(
@@ -215,7 +218,10 @@ router.post("/verify-security-answer", async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const isAnswerCorrect = await bcrypt.compare(securityAnswer, user.securityAnswer);
+    const isAnswerCorrect = await bcrypt.compare(
+      securityAnswer,
+      user.securityAnswer
+    );
     if (!isAnswerCorrect) {
       return res.status(400).json({ message: "Incorrect security answer." });
     }
@@ -241,7 +247,9 @@ router.post("/reset-password", async (req, res) => {
     const { token, newPassword } = req.body;
 
     if (!token || !newPassword) {
-      return res.status(400).json({ message: "Token and new password are required." });
+      return res
+        .status(400)
+        .json({ message: "Token and new password are required." });
     }
 
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN);
@@ -263,7 +271,6 @@ router.post("/reset-password", async (req, res) => {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 });
-
 
 router.post("/update-email", authenticateToken, async (req, res) => {
   try {
