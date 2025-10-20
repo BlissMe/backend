@@ -120,7 +120,7 @@ const setDepressionLevel = async (req, res) => {
 
     if (!depressionLevel) {
       await userService.updateDepressionLevel(userId, "unknown");
-      return res.status(200).json({ message: "Depression level skipped" });
+      return res.status(200).json({ message: "Depression level saved" });
     }
 
     if (!["mild", "moderate", "severe"].includes(depressionLevel.toLowerCase())) {
@@ -144,7 +144,7 @@ const setMedicineStatus = async (req, res) => {
 
     if (!takesMedicine) {
       await userService.updateMedicineStatus(userId, "skipped");
-      return res.status(200).json({ message: "Medicine question skipped" });
+      return res.status(200).json({ message: "Medicine status saved" });
     }
 
     if (!["yes", "no"].includes(takesMedicine.toLowerCase())) {
