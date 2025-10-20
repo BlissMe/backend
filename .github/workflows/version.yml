@@ -14,8 +14,12 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Push to Hugging Face
+      - name: Checkout version1 branch
+        run: git checkout version1
+
+      - name: Push to Hugging Face main branch
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          git push https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1 version1:main
+          git remote add hf https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1
+          git push hf version1:main --force
