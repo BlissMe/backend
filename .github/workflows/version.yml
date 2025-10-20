@@ -16,4 +16,4 @@ jobs:
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1 main
+        run: git push https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1 version1
