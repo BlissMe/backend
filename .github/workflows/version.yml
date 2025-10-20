@@ -1,8 +1,8 @@
 name: Sync to Hugging Face hub For Node backend
+
 on:
   push:
     branches: [version1]
-  # to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,9 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - name: Push to hub
+
+      - name: Push to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: git push https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1 main
+        run: |
+          git push https://ImashaNawodi:$HF_TOKEN@huggingface.co/spaces/ImashaNawodi/NodeBackendVersion1 version1:main
