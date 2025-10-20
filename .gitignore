@@ -14,8 +14,8 @@
 /tmp
 
 # images and binary assets
-/public/images/virtualCharacters/
-/uploads/
+/public/images/*
+!/public/images/virtualCharacters//uploads/
 /tmp/
 /*.png
 *.png
