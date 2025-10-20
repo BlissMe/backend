@@ -14,8 +14,8 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      - name: Checkout version1 branch
-        run: git checkout version1
+      - name: Checkout version2 branch
+        run: git checkout version2
 
       - name: Push to Hugging Face main branch
         env:
