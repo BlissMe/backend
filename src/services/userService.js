@@ -94,6 +94,23 @@ console.log(decryptedUsers);
   return { users: decryptedUsers };
 };
 
+const updateDepressionLevel = async (userId, level) => {
+  return await User.findOneAndUpdate(
+    { userID: userId },
+    { depressionLevel: level },
+    { new: true }
+  );
+};
+
+const updateMedicineStatus = async (userId, status) => {
+  return await User.findOneAndUpdate(
+    { userID: userId },
+    { takesMedicine: status },
+    { new: true }
+  );
+};
+
+
 module.exports = {
     setInitialPreferences,
     updateNickname,
@@ -101,5 +118,7 @@ module.exports = {
     updateInputMode,
     getUserPreferences,
     updateUserPreferences, 
-    getAllUserPreferences
+    getAllUserPreferences,
+    updateDepressionLevel,
+    updateMedicineStatus
 };
