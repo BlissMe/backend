@@ -5,19 +5,28 @@ const path = require("path");
 const fs = require("fs");
 const { uploadSketch, getAllSketches } = require("../controllers/sketchController");
 
-const uploadDir = path.join(__dirname, "../../uploads");
+let uploadDir;
 
-if (!fs.existsSync(uploadDir)) {
+try {
+  // Prefer creating uploads directory in the current working directory
+  uploadDir = path.join(process.cwd(), "uploads");
+  if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (err) {
+  console.error("⚠️ Failed to create upload directory in project root. Falling back to /tmp:", err);
+  uploadDir = "/tmp/uploads";
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+console.log("✅ Sketch uploads directory:", uploadDir);
+
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir); 
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
-    },
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const uniqueName = `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  },
 });
 
 const upload = multer({ storage });
