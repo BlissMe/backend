@@ -34,7 +34,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "text",
   },
-
+  languageMode: {
+    type: String,
+    default: "English",
+  },
+  
   faceDescriptor: {
     type: String,
     default: null,
