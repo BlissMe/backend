@@ -95,6 +95,18 @@ const updateUserPreferences = async (userId, preferences) => {
     return updatedUser;
 };
 
+const getAllUserPreferences = async () => {
+ const users = await User.find({});
+    if (!users) throw new Error("Users not found");
+
+    const decryptedUsers = users.map(user => ({
+    ...user.toObject(), 
+    nickname: user.nickname ? decrypt(user.nickname) : null
+  }));
+
+  return { users: decryptedUsers };
+};
+
 module.exports = {
     setInitialPreferences,
     updateNickname,
@@ -102,5 +114,5 @@ module.exports = {
     updateInputMode,
     getUserPreferences,
     updateUserPreferences, 
-    updatelanguageMode
+    getAllUserPreferences
 };

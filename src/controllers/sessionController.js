@@ -16,9 +16,10 @@ const handleCreateSession = async (req, res) => {
 
 const handleEndSession = async (req, res) => {
     const userID = req.user.userID;
-    const { sessionID } = req.body;
+    let { sessionID } = req.body;
 
     try {
+        sessionID = Number(sessionID);
         await ChatSession.findOneAndUpdate(
             { userID, sessionID },
             { endedAt: new Date() }
