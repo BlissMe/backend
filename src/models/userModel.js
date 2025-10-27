@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
+  role: { type: String, enum: ["patient", "doctor"], default: "patient" },
 });
 
 userSchema.plugin(AutoIncrement, { inc_field: "userID" });
