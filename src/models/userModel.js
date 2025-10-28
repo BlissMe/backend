@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const AutoIncrement = require("mongoose-sequence")(mongoose);
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   userID: {
     type: Number,
     unique: true,
   },
-  email: {
+  username: {
     type: String,
     unique: true,
     required: true,
@@ -24,11 +25,11 @@ const userSchema = new mongoose.Schema({
   },
   nickname: {
     type: String,
-    default: "",
+    default: "pinky",
   },
   virtualCharacter: {
     type: String,
-    default: "cat", // or any default you like
+    default: "cat",
   },
   inputMode: {
     type: String,
@@ -43,7 +44,35 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-  role: { type: String, enum: ["patient", "doctor"], default: "patient" },
+  role: { type: String, enum: ["patient"], default: "patient" },
+
+  securityQuestion: {
+    type: String,
+    required: true,
+  },
+  securityAnswer: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  modifiedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Hash password and security answer before saving
+userSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  if (this.isModified("securityAnswer")) {
+    this.securityAnswer = await bcrypt.hash(this.securityAnswer, 10);
+  }
+  next();
 });
 
 userSchema.plugin(AutoIncrement, { inc_field: "userID" });
