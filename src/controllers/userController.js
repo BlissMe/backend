@@ -3,8 +3,7 @@ const userService = require("../services/userService");
 const setPreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
-    console.log("Setting preferences for user controller:", userId);
-    const { nickname, virtualCharacter, inputMode ,languageMode} = req.body;
+    const { nickname, virtualCharacter, inputMode } = req.body;
 
     const user = await userService.setInitialPreferences(userId, {
       nickname,
@@ -126,15 +125,64 @@ const getAllPreferences = async (req, res) => {
   try {
 
     const preferences = await userService.getAllUserPreferences();
-
     res.status(200).json({
       message: "All User preferences fetched successfully",
       preferences,
     });
   } catch (err) {
+    console.log(err);
     res.status(400).json({ message: err.message });
   }
 };
+
+const setDepressionLevel = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { depressionLevel } = req.body;
+
+    if (!depressionLevel) {
+      await userService.updateDepressionLevel(userId, "unknown");
+      return res.status(200).json({ message: "Depression level saved" });
+    }
+
+    if (!["mild", "moderate", "severe"].includes(depressionLevel.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid depression level" });
+    }
+
+    const user = await userService.updateDepressionLevel(
+      userId,
+      depressionLevel.toLowerCase()
+    );
+    res.status(200).json({ message: "Depression level saved", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const setMedicineStatus = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { takesMedicine } = req.body;
+
+    if (!takesMedicine) {
+      await userService.updateMedicineStatus(userId, "skipped");
+      return res.status(200).json({ message: "Medicine status saved" });
+    }
+
+    if (!["yes", "no"].includes(takesMedicine.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid input for medicine" });
+    }
+
+    const user = await userService.updateMedicineStatus(
+      userId,
+      takesMedicine.toLowerCase()
+    );
+    res.status(200).json({ message: "Medicine status saved", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 module.exports = {
   setPreferences,
   updateNickname,
@@ -142,5 +190,7 @@ module.exports = {
   updateInputMode,
   getPreferences,
   updatePreferences,
-  getAllPreferences
+  getAllPreferences,
+  setDepressionLevel,
+  setMedicineStatus,
 };
