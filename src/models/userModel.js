@@ -35,6 +35,16 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "text",
   },
+   depressionLevel: {
+    type: String,
+    enum: ["mild", "moderate", "severe", "unknown"],
+    default: "unknown",
+  },
+  takesMedicine: {
+    type: String,
+    enum: ["yes", "no", "skipped"],
+    default: "skipped",
+  },
   faceDescriptor: {
     type: String,
     default: null,
@@ -48,6 +58,14 @@ const userSchema = new mongoose.Schema({
   securityAnswer: {
     type: String,
     required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  modifiedAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 

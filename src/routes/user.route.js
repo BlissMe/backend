@@ -10,5 +10,7 @@ router.patch("/preferences/input-mode", auth, userController.updateInputMode);
 router.get("/get-preferences", auth, userController.getPreferences);
 router.put("/update-preferences", auth, userController.updatePreferences);
 router.get("/all-preferences", auth, userController.getAllPreferences);
+router.post("/depression-level", auth, userController.setDepressionLevel);
+router.post("/medicine-status", auth, userController.setMedicineStatus);
 
 module.exports = router;
