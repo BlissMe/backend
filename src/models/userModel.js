@@ -59,6 +59,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  modifiedAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 // Hash password and security answer before saving
