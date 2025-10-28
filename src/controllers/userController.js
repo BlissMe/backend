@@ -9,6 +9,7 @@ const setPreferences = async (req, res) => {
       nickname,
       virtualCharacter,
       inputMode,
+      languageMode,
     });
 
     res.status(200).json({ message: "Preferences set successfully", user });
@@ -60,6 +61,22 @@ const updateInputMode = async (req, res) => {
   }
 };
 
+const updatelanguageMode = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { languageMode } = req.body;
+
+    if (!["Sinhala", "English"].includes(languageMode)) {
+      return res.status(400).json({ message: " Invalid Language Mode" });
+    }
+
+    const user = await userService.updatelanguageMode(userId, languageMode);
+    res.status(200).json({ message: "Language Mode updated", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 const getPreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -78,16 +95,21 @@ const getPreferences = async (req, res) => {
 const updatePreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { nickname, virtualCharacter, inputMode } = req.body;
+    const { nickname, virtualCharacter, inputMode, languageMode } = req.body;
 
     if (inputMode && !["voice", "text"].includes(inputMode.toLowerCase())) {
       return res.status(400).json({ message: "Invalid input mode" });
+    }
+
+    if (languageMode && !["sinhala", "english"].includes(languageMode.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid Language Mode" });
     }
 
     const updatedUser = await userService.updateUserPreferences(userId, {
       nickname,
       virtualCharacter,
       inputMode,
+      languageMode
     });
 
     res.status(200).json({
