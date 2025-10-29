@@ -123,7 +123,7 @@ const setDepressionLevel = async (req, res) => {
       return res.status(200).json({ message: "Depression level saved" });
     }
 
-    if (!["mild", "moderate", "severe"].includes(depressionLevel.toLowerCase())) {
+    if (!["noidea","mild", "moderate", "severe"].includes(depressionLevel.toLowerCase())) {
       return res.status(400).json({ message: "Invalid depression level" });
     }
 
