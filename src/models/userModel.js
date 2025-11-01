@@ -35,9 +35,13 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "text",
   },
-   depressionLevel: {
+  languageMode: {
     type: String,
-    enum: ["mild", "moderate", "severe", "unknown","noIdea"],
+    default: "English",
+  },
+  depressionLevel: {
+    type: String,
+    enum: ["mild", "moderate", "severe", "unknown", "noIdea"],
     default: "unknown",
   },
   takesMedicine: {

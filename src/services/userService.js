@@ -1,7 +1,7 @@
 const User = require("../models/userModel");
 const { encrypt, decrypt } = require("../utils/chatEncryption");
 
-const setInitialPreferences = async (userId, { nickname, virtualCharacter, inputMode }) => {
+const setInitialPreferences = async (userId, { nickname, virtualCharacter, inputMode, languageMode }) => {
     const user = await User.findOne({ userID: userId });
     if (!user) throw new Error("User not found");
 
@@ -26,6 +26,7 @@ const getUserPreferences = async (userId) => {
         nickname: user.nickname ? decrypt(user.nickname) : null,
         virtualCharacter: user.virtualCharacter || null,
         inputMode: user.inputMode || null,
+        languageMode: user.languageMode || null,
     };
 };
 
@@ -54,6 +55,14 @@ const updateInputMode = async (userId, inputMode) => {
     );
 };
 
+const updatelanguageMode = async (userId, languageMode) => {
+    return await User.findOneAndUpdate(
+        { userID: userId },
+        { languageMode: languageMode },
+        { new: true }
+    );
+};
+
 const updateUserPreferences = async (userId, preferences) => {
     const updates = {};
 
@@ -67,6 +76,9 @@ const updateUserPreferences = async (userId, preferences) => {
 
     if (preferences.inputMode !== undefined) {
         updates.inputMode = preferences.inputMode;
+    }
+    if (preferences.languageMode !== undefined) {
+        updates.languageMode = preferences.languageMode;
     }
 
     if (Object.keys(updates).length === 0) {
