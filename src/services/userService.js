@@ -9,9 +9,10 @@ const setInitialPreferences = async (userId, { nickname, virtualCharacter, input
         throw new Error("Preferences already set");
     }
 
-    user.nickname = encrypt(nickname);
-    user.virtualCharacter = virtualCharacter;
-    user.inputMode = inputMode;
+  const finalNickname = nickname && nickname.trim() !== "" ? nickname : "pinky";
+  user.nickname = encrypt(finalNickname);
+  user.virtualCharacter = virtualCharacter;
+  user.inputMode = inputMode;
 
     return await user.save();
 };
@@ -29,11 +30,12 @@ const getUserPreferences = async (userId) => {
 };
 
 const updateNickname = async (userId, nickname) => {
-    return await User.findOneAndUpdate(
-        { userID: userId },
-        { nickname: encrypt(nickname) },
-        { new: true }
-    );
+  const finalNickname = nickname && nickname.trim() !== "" ? nickname : "pinky";
+  return await User.findOneAndUpdate(
+    { userID: userId },
+    { nickname: encrypt(finalNickname) },
+    { new: true }
+  );
 };
 
 const updateVirtualCharacter = async (userId, virtualCharacter) => {
@@ -90,7 +92,6 @@ const getAllUserPreferences = async () => {
     ...user.toObject(), 
     nickname: user.nickname ? decrypt(user.nickname) : null
   }));
-console.log(decryptedUsers);
   return { users: decryptedUsers };
 };
 
