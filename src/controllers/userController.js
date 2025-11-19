@@ -3,13 +3,13 @@ const userService = require("../services/userService");
 const setPreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
-    console.log("Setting preferences for user controller:", userId);
     const { nickname, virtualCharacter, inputMode } = req.body;
 
     const user = await userService.setInitialPreferences(userId, {
       nickname,
       virtualCharacter,
       inputMode,
+      languageMode,
     });
 
     res.status(200).json({ message: "Preferences set successfully", user });
@@ -61,6 +61,22 @@ const updateInputMode = async (req, res) => {
   }
 };
 
+const updatelanguageMode = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { languageMode } = req.body;
+
+    if (!["Sinhala", "English"].includes(languageMode)) {
+      return res.status(400).json({ message: " Invalid Language Mode" });
+    }
+
+    const user = await userService.updatelanguageMode(userId, languageMode);
+    res.status(200).json({ message: "Language Mode updated", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 const getPreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -79,16 +95,21 @@ const getPreferences = async (req, res) => {
 const updatePreferences = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const { nickname, virtualCharacter, inputMode } = req.body;
+    const { nickname, virtualCharacter, inputMode, languageMode } = req.body;
 
     if (inputMode && !["voice", "text"].includes(inputMode.toLowerCase())) {
       return res.status(400).json({ message: "Invalid input mode" });
+    }
+
+    if (languageMode && !["sinhala", "english"].includes(languageMode.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid Language Mode" });
     }
 
     const updatedUser = await userService.updateUserPreferences(userId, {
       nickname,
       virtualCharacter,
       inputMode,
+      languageMode
     });
 
     res.status(200).json({
@@ -104,7 +125,6 @@ const getAllPreferences = async (req, res) => {
   try {
 
     const preferences = await userService.getAllUserPreferences();
-console.log(preferences);
     res.status(200).json({
       message: "All User preferences fetched successfully",
       preferences,
@@ -114,6 +134,55 @@ console.log(preferences);
     res.status(400).json({ message: err.message });
   }
 };
+
+const setDepressionLevel = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { depressionLevel } = req.body;
+
+    if (!depressionLevel) {
+      await userService.updateDepressionLevel(userId, "unknown");
+      return res.status(200).json({ message: "Depression level saved" });
+    }
+
+    if (!["noidea","mild", "moderate", "severe"].includes(depressionLevel.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid depression level" });
+    }
+
+    const user = await userService.updateDepressionLevel(
+      userId,
+      depressionLevel.toLowerCase()
+    );
+    res.status(200).json({ message: "Depression level saved", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const setMedicineStatus = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { takesMedicine } = req.body;
+
+    if (!takesMedicine) {
+      await userService.updateMedicineStatus(userId, "skipped");
+      return res.status(200).json({ message: "Medicine status saved" });
+    }
+
+    if (!["yes", "no"].includes(takesMedicine.toLowerCase())) {
+      return res.status(400).json({ message: "Invalid input for medicine" });
+    }
+
+    const user = await userService.updateMedicineStatus(
+      userId,
+      takesMedicine.toLowerCase()
+    );
+    res.status(200).json({ message: "Medicine status saved", user });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
 module.exports = {
   setPreferences,
   updateNickname,
@@ -121,5 +190,7 @@ module.exports = {
   updateInputMode,
   getPreferences,
   updatePreferences,
-  getAllPreferences
+  getAllPreferences,
+  setDepressionLevel,
+  setMedicineStatus,
 };
