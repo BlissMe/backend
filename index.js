@@ -11,7 +11,6 @@ const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 
 const authRoute = require("./src/routes/userGoogleAccount.route");
-const userRoute = require("./src/routes/userDetails.route");
 const userAuthRoute = require("./src/routes/userAuth.route");
 const chatRoutes = require("./src/routes/chat.route");
 const sessionRoutes = require("./src/routes/session.route");
@@ -29,7 +28,7 @@ const therapyListRoutes = require("./src/routes/therapyList.route");
 // Use CORS middleware before routes
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:3001", "https://blissme.vercel.app", "https://doctor-portal-phi.vercel.app"],
+    origin: ["http://localhost:3000","http://localhost:3001", "https://blissme.vercel.app","https://doctor-portal-phi.vercel.app","https://blissme-v2.vercel.app","https://blissme-v1.vercel.app"],
     methods: "GET,POST,PUT,DELETE,PATCH",
     credentials: true,
   })
@@ -37,7 +36,7 @@ app.use(
 
 app.use(
   session({
-    secret: "xzcbnxncdhvbfhncxbnvbcfhv", // use a strong secret in production
+    secret: "xzcbnxncdhvbfhncxbnvbcfhv",
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -60,7 +59,6 @@ mongoose
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/auth", authRoute);
-app.use("/user", userRoute);
 app.use("/authuser", userAuthRoute);
 app.use("/chat", chatRoutes);
 app.use("/session", sessionRoutes);
