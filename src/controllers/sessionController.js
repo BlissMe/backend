@@ -34,7 +34,35 @@ const handleEndSession = async (req, res) => {
     }
 };
 
+const handleGetLatestSession = async (req, res) => {
+    const userID = req.query.userID; 
+
+    if (!userID) {
+        return res.status(400).json({ error: "Missing userID parameter" });
+    }
+
+    try {
+        const latestSession = await ChatSession.findOne({ userID })
+            .sort({ createdAt: -1 })
+            .lean();
+
+        if (!latestSession) {
+            return res.status(404).json({ error: "No session found" });
+        }
+
+        res.status(200).json({
+            success: true,
+            sessionID: latestSession.sessionID,
+            createdAt: latestSession.createdAt,
+        });
+    } catch (err) {
+        console.error("Error fetching latest session:", err.message);
+        res.status(500).json({ error: "Failed to fetch session" });
+    }
+};
+
 module.exports = {
     handleCreateSession,
-    handleEndSession
+    handleEndSession,
+    handleGetLatestSession
 };
