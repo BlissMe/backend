@@ -24,7 +24,7 @@ async function sendSMS({ message, phone }) {
 
     } catch (err) {
         console.error("Error sending SMS:", err.response?.data || err.message);
-        throw new Error("SMS sending failed");
+        throw err;
     }
 }
 
