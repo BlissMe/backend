@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/signup", async (req, res) => {
   try {
-    const { username, password, phoneNumber, securityQuestion, securityAnswer } = req.body;
+    const { username, password ,securityQuestion, securityAnswer } = req.body;
 
     if (!securityQuestion || !securityAnswer) {
       return res
@@ -30,7 +30,6 @@ router.post("/signup", async (req, res) => {
     const newUser = new User({
       username: encryptedUsername,
       password,
-      phoneNumber,
       securityQuestion,
       securityAnswer,
     });
@@ -46,7 +45,6 @@ router.post("/signup", async (req, res) => {
     res.status(200).json({
       message: "Successfully Registered",
       token,
-      phoneNumber: phoneNumber,
       username: username,
       userID: newUser.userID,
     });
