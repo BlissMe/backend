@@ -3,25 +3,35 @@ const { sendSMS } = require("../services/mSpaceSmsService");
 const sendTherapySMS = async (req, res) => {
     const { phone, text } = req.body;
 
-    if (!phone || !text) {
-        return res.status(400).json({ error: "phone and text are required" });
+    if (!phone) {
+        return res.status(400).json({
+            success: false,
+            error: "phone is required"
+        });
     }
 
     try {
         const apiResponse = await sendSMS({
-            phone,
-            message: text,
+            phone: phone,
+            message: text,   // IMPORTANT: backend expects "message"
         });
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            apiResponse,
+            result: apiResponse,
         });
+
     } catch (err) {
-        res.status(500).json({
+        console.error(
+            "Error sending SMS:",
+            err.response?.status,
+            err.response?.data || err.message
+        );
+
+        return res.status(500).json({
             success: false,
             error: "Failed to send SMS",
-            details: err.message,
+            details: err.response?.data || err.message
         });
     }
 };
