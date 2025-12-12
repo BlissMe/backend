@@ -7,7 +7,7 @@ async function sendSMS({ message, phone }) {
             applicationId: process.env.MSPACE_APP_ID,
             password: process.env.MSPACE_PASSWORD,
             message: message,
-            destinationAddresses: [`tel:${phone}`],
+            destinationAddresses: [phone],
             sourceAddress: "77100",              // Mobitel provided shortcode
             deliveryStatusRequest: "1",          // Want delivery report
             encoding: "0"                        // 0 = text message
