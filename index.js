@@ -25,6 +25,7 @@ const doctorRoutes = require("./src/routes/doctor.route");
 const doctorAuthRoutes = require("./src/routes/doctorAuth.route");
 const therapyListRoutes = require("./src/routes/therapyList.route");
 const smsRoutes = require("./src/routes/mSpaceSms.route");
+const subscriptionRoutes = require("./src/routes/subscription.route");
 // Use CORS middleware before routes
 app.use(
   cors({
@@ -73,6 +74,7 @@ app.use("/doctorlevel", doctorRoutes);
 app.use("/doctorAuth", doctorAuthRoutes);
 app.use("/api/therapyList", therapyListRoutes);
 app.use("/sms", smsRoutes);
+app.use("/api", subscriptionRoutes);
 
 
 app.get("/", (req, res) => {
