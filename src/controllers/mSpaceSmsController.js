@@ -30,8 +30,9 @@ const sendTherapySMS = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            error: "Failed to send SMS",
-            details: err.response?.data || err.message
+            error: err || "Failed to send SMS",
+            details: err.response?.data || err.message,
+            status: err.response?.status || 500,
         });
     }
 };
