@@ -133,7 +133,6 @@ exports.requestOtp = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   try {
     const { referenceNo, otp } = req.body;
-    const { userID } = req.user;
     const payload = {
       applicationId: process.env.MSPACE_APP_ID,
       password: process.env.MSPACE_PASSWORD,
@@ -150,21 +149,40 @@ exports.verifyOtp = async (req, res) => {
         }
       }
     );
-    const data = response.data;
-
-    if (data.statusCode === "S1000" && data.subscriberId) {
-      await saveSubscriber({
-        userID,
-        subscriberId: data.subscriberId,
-        subscriptionStatus: data.subscriptionStatus
-      });
-    }
 
     res.status(200).json(response.data);
   } catch (error) {
     res.status(500).json({
       message: "OTP verification failed",
       error: error.response?.data || error.message
+    });
+  }
+};
+
+
+exports.saveSubscriberController = async (req, res) => {
+  try {
+    const { subscriberId, subscriptionStatus } = req.body;
+    const { userID } = req.user;
+
+    if (!subscriberId) {
+      return res.status(400).json({ message: "subscriberId is required" });
+    }
+
+    await saveSubscriber({
+      userID,
+      subscriberId,
+      subscriptionStatus
+    });
+
+    res.status(200).json({
+      message: "Subscriber saved successfully"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to save subscriber",
+      error: error.message
     });
   }
 };
