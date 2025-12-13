@@ -94,7 +94,7 @@ exports.requestOtp = async (req, res) => {
     const applicationMetaData = {
       client: "WEB",
       device: "Web Browser",
-      os: req.headers["user-agent"] || "N/A",
+      os: "Windows 11",
       appCode: "https://blissme.vercel.app/"
     };
 
