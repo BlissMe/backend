@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { saveSubscriber } = require("../services/mSpaceService");
 
 exports.sendSubscription = async (req, res) => {
   try {
@@ -11,7 +12,7 @@ exports.sendSubscription = async (req, res) => {
     const payload = {
       applicationId: process.env.MSPACE_APP_ID,
       password: process.env.MSPACE_PASSWORD,
-      subscriberId: subscriberId, 
+      subscriberId: subscriberId,
       action: action
     };
 
@@ -132,6 +133,7 @@ exports.requestOtp = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   try {
     const { referenceNo, otp } = req.body;
+    const { userID } = req.user;
 
     const payload = {
       applicationId: process.env.MSPACE_APP_ID,
@@ -149,6 +151,14 @@ exports.verifyOtp = async (req, res) => {
         }
       }
     );
+
+    if (data.statusCode === "S1000" && data.subscriberId) {
+      await saveSubscriber({
+        userID,
+        subscriberId: data.subscriberId,
+        subscriptionStatus: data.subscriptionStatus
+      });
+    }
 
     res.status(200).json(response.data);
   } catch (error) {

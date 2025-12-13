@@ -8,9 +8,9 @@ async function sendSMS({ message, phone }) {
             password: process.env.MSPACE_PASSWORD,
             message: message,
             destinationAddresses: [phone],
-            sourceAddress: "77100",              // Mobitel provided shortcode
-            deliveryStatusRequest: "1",          // Want delivery report
-            encoding: "0"                        // 0 = text message
+            sourceAddress: "77100",
+            deliveryStatusRequest: "1",
+            encoding: "0"
         };
 
         const response = await axios.post(
