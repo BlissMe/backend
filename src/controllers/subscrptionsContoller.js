@@ -133,7 +133,7 @@ exports.requestOtp = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   try {
     const { referenceNo, otp } = req.body;
-
+    const { userID } = req.user;
     const payload = {
       applicationId: process.env.MSPACE_APP_ID,
       password: process.env.MSPACE_PASSWORD,
