@@ -74,7 +74,7 @@ app.use("/doctorlevel", doctorRoutes);
 app.use("/doctorAuth", doctorAuthRoutes);
 app.use("/api/therapyList", therapyListRoutes);
 app.use("/sms", smsRoutes);
-app.use("/api", subscriptionRoutes);
+app.use("/mspace", subscriptionRoutes);
 
 
 app.get("/", (req, res) => {
