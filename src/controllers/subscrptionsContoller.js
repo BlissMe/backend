@@ -35,8 +35,6 @@ exports.sendSubscription = async (req, res) => {
   }
 };
 
-
-// Subscriber Notification Controller
 exports.sendSubscriberNotification = async (req, res) => {
   try {
     const {
@@ -47,7 +45,6 @@ exports.sendSubscriberNotification = async (req, res) => {
       status
     } = req.body;
 
-    // Basic validation
     if (!timeStamp || !version || !subscriberId || !frequency) {
       return res.status(400).json({
         message: "Missing required fields"
@@ -85,4 +82,80 @@ exports.sendSubscriberNotification = async (req, res) => {
     });
   }
 };
+
+exports.requestOtp = async (req, res) => {
+  try {
+    const { subscriberId, applicationHash } = req.body;
+    if (!subscriberId) {
+      return res.status(400).json({
+        message: "subscriberId is required"
+      });
+    }
+    const applicationMetaData = {
+      client: "WEB",
+      device: "Web Browser",
+      os: req.headers["user-agent"] || "N/A",
+      appCode: "https://blissme.vercel.app/"
+    };
+
+    const payload = {
+      applicationId: process.env.MSPACE_APP_ID,
+      password: process.env.MSPACE_PASSWORD,
+      subscriberId,
+      applicationHash: applicationHash || "default_hash",
+      applicationMetaData
+    };
+
+    const response = await axios.post(
+      "https://api.mspace.lk/otp/request",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      }
+    );
+
+    return res.status(200).json(response.data);
+
+  } catch (error) {
+    console.error("OTP Request Error:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      message: "OTP request failed",
+      error: error.response?.data || error.message
+    });
+  }
+};
+// VERIFY OTP
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { referenceNo, otp } = req.body;
+
+    const payload = {
+      applicationId: process.env.MSPACE_APP_ID,
+      password: process.env.MSPACE_PASSWORD,
+      referenceNo,
+      otp
+    };
+
+    const response = await axios.post(
+      "https://api.mspace.lk/otp/verify",
+      payload,
+      {
+        headers: {
+          "Content-Type": "application/json;charset=utf-8"
+        }
+      }
+    );
+
+    res.status(200).json(response.data);
+  } catch (error) {
+    res.status(500).json({
+      message: "OTP verification failed",
+      error: error.response?.data || error.message
+    });
+  }
+};
+
 
