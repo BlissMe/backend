@@ -7,7 +7,9 @@ async function sendSMS({ message, phone }) {
             applicationId: process.env.MSPACE_APP_ID,
             password: process.env.MSPACE_PASSWORD,
             message: message,
-            destinationAddresses: [phone],
+            destinationAddresses: [
+                phone.startsWith("tel:") ? phone : `tel:${phone}`
+            ],
             sourceAddress: "77100",
             deliveryStatusRequest: "1",
             encoding: "0"
