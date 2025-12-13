@@ -92,7 +92,7 @@ exports.requestOtp = async (req, res) => {
       });
     }
     const applicationMetaData = {
-      client: "web browser",
+      client: "WEBBROWSER",
       device: "Web Browser",
       os: "Windows 11",
       appCode: "https://blissme.vercel.app/"
