@@ -158,31 +158,31 @@ exports.verifyOtp = async (req, res) => {
 };
 
 
-exports.saveSubscriberController = async (req, res) => {
-  try {
-    const { subscriberId, subscriptionStatus } = req.body;
-    const { userID } = req.user;
+// exports.saveSubscriberController = async (req, res) => {
+//   try {
+//     const { subscriberId, subscriptionStatus } = req.body;
+//     const { userID } = req.user;
 
-    if (!subscriberId) {
-      return res.status(400).json({ message: "subscriberId is required" });
-    }
+//     if (!subscriberId) {
+//       return res.status(400).json({ message: "subscriberId is required" });
+//     }
 
-    await saveSubscriber({
-      userID,
-      subscriberId,
-      subscriptionStatus
-    });
+//     await saveSubscriber({
+//       userID,
+//       subscriberId,
+//       subscriptionStatus
+//     });
 
-    res.status(200).json({
-      message: "Subscriber saved successfully"
-    });
+//     res.status(200).json({
+//       message: "Subscriber saved successfully"
+//     });
 
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to save subscriber",
-      error: error.message
-    });
-  }
-};
+//   } catch (error) {
+//     res.status(500).json({
+//       message: "Failed to save subscriber",
+//       error: error.message
+//     });
+//   }
+// };
 
 
