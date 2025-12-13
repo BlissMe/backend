@@ -5,9 +5,7 @@ exports.sendSubscription = async (req, res) => {
   try {
     const { subscriberId, action } = req.body;
 
-    if (!subscriberId || !action) {
-      return res.status(400).json({ message: "subscriberId and action are required" });
-    }
+   
 
     const payload = {
       applicationId: process.env.MSPACE_APP_ID,
