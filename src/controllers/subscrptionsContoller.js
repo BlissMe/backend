@@ -151,6 +151,7 @@ exports.verifyOtp = async (req, res) => {
         }
       }
     );
+    const data = response.data;
 
     if (data.statusCode === "S1000" && data.subscriberId) {
       await saveSubscriber({
