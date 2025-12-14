@@ -31,9 +31,12 @@ app.use(
   cors({
     origin: ["http://localhost:3000", "http://localhost:3001", "https://blissme.vercel.app", "https://doctor-portal-phi.vercel.app", "https://blissme-v2.vercel.app", "https://blissme-v1.vercel.app", "https://blissme-v3.vercel.app"],
     methods: "GET,POST,PUT,DELETE,PATCH",
+    allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+app.options("*", cors());
 
 app.use(
   session({
